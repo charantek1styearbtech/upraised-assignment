@@ -1,38 +1,54 @@
-const {Model,Datatype}=require('sequelize');
-const sequelize=require('../db/Gadgets.db');
-const bcrypt=require('bcrypt');
-const jwt=require('jsonwebtoken');
-class User extends Model{
-    async comaprePassword(password){
-        return await bcrypt.compare(password,this.password);
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../db/users.db');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+class User extends Model {
+    async comaprePassword(password) {
+        return await bcrypt.compare(password, this.password);
     }
-    genrateToken(){
-        return jwt.sign({id:this.id},process.env.JWT_SECRETKEY,{expiresIn:'24h'});
+    genrateToken() {
+        if (!process.env.JWT_SECRETKEY) {
+            throw new Error('JWT_SECRETKEY is not defined in environment variables');
+        }
+        return jwt.sign(
+            { id: this.id }, 
+            process.env.JWT_SECRETKEY, 
+            { expiresIn: '24h' }
+        );
     }
-    async hashPassword(password){
-        return await bcrypt.hash(password,10);
+    async hashPassword(password) {
+        return await bcrypt.hash(password, 10);
     }
 }
 
 User.init({
-    id:{
-        type:Datatype.UUID,
-        defaultValue:Datatype.UUIDV4,
-        primaryKey:true,
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
     },
-    name:{
-        type:Datatype.STRING,
-        allowNull:false,
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
-    email:{
-        type:Datatype.STRING,
-        allowNull:false,
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: true
+        }
     },
-    password:{
-        type:Datatype.STRING,
-        allowNull:false,
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
     }
+}, {
+    sequelize,
+    modelName: 'User',
+    tableName: 'Users',
+    timestamps: true
+});
 
-},{sequelize,modelName:'User'});
-
-module.exports=User;
+module.exports = User;

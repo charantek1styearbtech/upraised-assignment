@@ -1,17 +1,12 @@
-const express=require('express');
-const router=express.Router();
+const express = require('express');
+const router = express.Router();
+const authUser = require('../middleware/user.auth');
+const { getGadget,addGadget} = require('../controller/gadgets.controller');
 
+// Protected route - requires valid JWT token
+router.get('/', authUser, getGadget);
+router.post('/',authUser, addGadget);
+//router.patch('/',authUser,gadgetsController.patchGadget);
+//router.delete('/',authUser,gadgetsController.deleteGadget);
 
-router.get('/',(req,res)=>{
-    res.send('Done');
-});
-router.post('/',(req,res)=>{
-    res.send('Done');
-})
-router.patch('/',(req,res)=>{
-    res.send('Done');
-})
-router.delete('/',(req,res)=>{
-    res.send('Done');
-})
-module.exports=router;
+module.exports = router;
