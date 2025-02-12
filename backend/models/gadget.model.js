@@ -17,6 +17,10 @@ Gadgets.init({
     type: DataTypes.ENUM('Available', 'Deployed', 'Destroyed', 'Decommissioned'),
     allowNull: false,
   },
+  decommissionedAt: {
+    type: DataTypes.DATE,
+    allowNull: true
+  }
 }, {
   sequelize,
   modelName: 'Gadgets',

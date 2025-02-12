@@ -22,6 +22,48 @@ const createGadget = async ({name, status}) => {
     }
 };
 
+const updateGadget = async (name, { status }) => {
+    const gadget = await Gadgets.findOne({where:{name}});
+    if (!gadget) {
+        throw new Error('Gadget not found');
+    }
+
+    gadget.status = status;
+    gadget.decommissionedAt= null;
+    await gadget.save();
+    return gadget;
+};
+
+const decommissionGadget = async (name) => {
+    const gadget = await Gadgets.findOne({where:{name}});
+    if (!gadget) {
+        throw new Error('Gadget not found');
+    }
+
+    gadget.status = 'Decommissioned';
+    gadget.decommissionedAt = new Date();
+    await gadget.save();
+    return gadget;
+};
+
+const selfDestructGadget = async (id) => {
+    const gadget = await Gadgets.findByPk(id);
+    if (!gadget) {
+        throw new Error('Gadget not found');
+    }
+
+    if (gadget.status === 'Destroyed' || gadget.status === 'Decommissioned') {
+        throw new Error('Gadget is already destroyed or decommissioned');
+    }
+
+    gadget.status = 'Destroyed';
+    await gadget.save();
+    return gadget;
+};
+
 module.exports = {
-    createGadget
+    createGadget,
+    updateGadget,
+    decommissionGadget,
+    selfDestructGadget
 };
