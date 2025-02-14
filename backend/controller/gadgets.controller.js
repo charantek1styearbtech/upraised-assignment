@@ -163,12 +163,14 @@ const deleteGadget = async(req, res) => {
 
         const { name } = req.body;
         const decommissionedGadget = await gadgetService.decommissionGadget(name);
+        
         if (!decommissionedGadget) {
             return res.status(404).json({
                 success: false,
-                message: 'Gadget already decommissioned',
+                message: 'Gadget not found or already decommissioned',
             });
         }
+        
         return res.status(200).json({
             success: true,
             message: 'Gadget decommissioned successfully',

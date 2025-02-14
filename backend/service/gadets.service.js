@@ -25,7 +25,7 @@ const createGadget = async ({name, status}) => {
 const updateGadget = async (name, { status }) => {
     const gadget = await Gadgets.findOne({where:{name}});
     if (!gadget) {
-        throw new Error('Gadget not found');
+        return null;
     }
 
     gadget.status = status;
@@ -37,7 +37,7 @@ const updateGadget = async (name, { status }) => {
 const decommissionGadget = async (name) => {
     const gadget = await Gadgets.findOne({where:{name}});
     if (!gadget) {
-        throw new Error('Gadget not found');
+        return null;
     }
 
     gadget.status = 'Decommissioned';
@@ -49,7 +49,7 @@ const decommissionGadget = async (name) => {
 const selfDestructGadget = async (id) => {
     const gadget = await Gadgets.findByPk(id);
     if (!gadget) {
-        throw new Error('Gadget not found');
+        return null;
     }
 
     if (gadget.status === 'Destroyed' || gadget.status === 'Decommissioned') {
