@@ -40,7 +40,7 @@ const getGadget = async(req, res) => {
         if (status) {
             const gadgets = await Gadgets.findAll({ where: { status } });
             if (!gadgets || gadgets.length === 0) {
-                return res.status(404).json({
+                return res.status(400).json({
                     success: false,
                     message: "No Gadgets with the specified status found"
                 });
