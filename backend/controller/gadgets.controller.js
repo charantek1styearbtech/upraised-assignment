@@ -27,17 +27,23 @@ const getRandomGadgetName = () => {
 
 const getGadget = async(req, res) => {
     try {
-        const errors=validationResult(req);
-        if(!errors.isEmpty)
-        {
-            return res.status(400).json({message:errors.array()});
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation errors',
+                errors: errors.array()
+            });
         }
         const { status } = req.query;
         console.log(status);
         if (status) {
             const gadgets = await Gadgets.findAll({ where: { status } });
             if (!gadgets || gadgets.length === 0) {
-                return res.status(404).json({ message: "No Gadgets with the specified status found" });
+                return res.status(404).json({
+                    success: false,
+                    message: "No Gadgets with the specified status found"
+                });
             }
             return res.status(200).json({
                 success: true,
@@ -46,7 +52,10 @@ const getGadget = async(req, res) => {
         }
         const gadgets = await Gadgets.findAll();
         if (!gadgets || gadgets.length === 0) {
-            return res.status(404).json({ message: 'No gadgets found' });
+            return res.status(404).json({
+                success: false,
+                message: 'No gadgets found'
+            });
         }
         const modifiedGadgets = gadgets.map(gadget => {
             const successProbability = Math.floor(Math.random() * 101);
@@ -62,7 +71,7 @@ const getGadget = async(req, res) => {
         });
     } catch (error) {
         console.error('Error fetching gadgets:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Error fetching gadgets',
             error: error.message
@@ -73,8 +82,12 @@ const getGadget = async(req, res) => {
 const addGadget = async(req, res) => {
     try {
         const errors = validationResult(req);
-        if(!errors.isEmpty()) {
-            return res.status(400).json({message: errors.array()});
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation errors',
+                errors: errors.array()
+            });
         }
         const name = getRandomGadgetName();
         const status = 'Available';
@@ -82,7 +95,7 @@ const addGadget = async(req, res) => {
             name,
             status
         });
-        return res.status(201).json({
+        return res.status(200).json({
             success: true,
             message: 'Gadget created successfully',
             data: gadget
@@ -101,9 +114,13 @@ const updateGadget = async(req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({message: errors.array()});
+            return res.status(400).json({
+                success: false,
+                message: 'Validation errors',
+                errors: errors.array()
+            });
         }
-        const { name,status } = req.body;
+        const { name, status } = req.body;
         const validStatuses = ['Available', 'Deployed', 'Destroyed', 'Decommissioned'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({
@@ -112,6 +129,12 @@ const updateGadget = async(req, res) => {
             });
         }
         const updatedGadget = await gadgetService.updateGadget(name, { status });
+        if (!updatedGadget) {
+            return res.status(404).json({
+                success: false,
+                message: 'Gadget not found'
+            });
+        }
         return res.status(200).json({
             success: true,
             message: 'Gadget updated successfully',
@@ -131,12 +154,21 @@ const deleteGadget = async(req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({message: errors.array()});
+            return res.status(400).json({
+                success: false,
+                message: 'Validation errors',
+                errors: errors.array()
+            });
         }
 
         const { name } = req.body;
         const decommissionedGadget = await gadgetService.decommissionGadget(name);
-
+        if (!decommissionedGadget) {
+            return res.status(404).json({
+                success: false,
+                message: 'Gadget already decommissioned',
+            });
+        }
         return res.status(200).json({
             success: true,
             message: 'Gadget decommissioned successfully',
@@ -161,7 +193,11 @@ const selfDestructGadget = async(req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({message: errors.array()});
+            return res.status(400).json({
+                success: false,
+                message: 'Validation errors',
+                errors: errors.array()
+            });
         }
 
         const { id } = req.params;
@@ -186,6 +222,12 @@ const selfDestructGadget = async(req, res) => {
         }
         delete req.session?.confirmationCode;
         const destroyedGadget = await gadgetService.selfDestructGadget(id);
+        if (!destroyedGadget) {
+            return res.status(404).json({
+                success: false,
+                message: 'Gadget not found for self-destruct'
+            });
+        }
         return res.status(200).json({
             success: true,
             message: 'Gadget self-destruct sequence completed',

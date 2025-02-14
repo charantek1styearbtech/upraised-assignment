@@ -78,7 +78,6 @@ const userLogin = async (req, res) => {
 
 const userLogout = async (req, res) => {
     try {
-        // Clear the token cookie if it exists
         if (req.cookies.token) {
             res.clearCookie('token');
         }
