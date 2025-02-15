@@ -60,10 +60,9 @@ const selfDestructGadget = async (id) => {
     return gadget;
 };
 
-const getByStatus= async (status)=>{
-    const gadget=await Gadgets.findAll({where:{status}});
-    if(!gadget)
-    {
+const getByStatus =async(status){
+    const gadget=await Gadgets.find({where:{status}});
+    if(!gadget){
         return null;
     }
     return gadget;
@@ -74,4 +73,5 @@ module.exports = {
     decommissionGadget,
     selfDestructGadget,
     getByStatus
+
 };
