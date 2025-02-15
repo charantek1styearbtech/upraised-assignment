@@ -1,5 +1,4 @@
 const Gadgets = require('../models/gadget.model');
-const {v4: uuidv4} = require('uuid');
 
 const createGadget = async ({name, status}) => {
     try{
@@ -61,9 +60,18 @@ const selfDestructGadget = async (id) => {
     return gadget;
 };
 
+const getByStatus= async (status)=>{
+    const gadget=await Gadgets.findAll({where:{status}});
+    if(!gadget)
+    {
+        return null;
+    }
+    return gadget;
+};
 module.exports = {
     createGadget,
     updateGadget,
     decommissionGadget,
-    selfDestructGadget
+    selfDestructGadget,
+    getByStatus
 };

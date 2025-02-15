@@ -38,7 +38,7 @@ const getGadget = async(req, res) => {
         const { status } = req.query;
         console.log(status);
         if (status) {
-            const gadgets = await Gadgets.findAll({ where: { status } });
+            const gadgets = await gadgetService.getByStatus(status);
             if (!gadgets || gadgets.length === 0) {
                 return res.status(404).json({
                     success: false,
@@ -71,7 +71,7 @@ const getGadget = async(req, res) => {
         });
     } catch (error) {
         console.error('Error fetching gadgets:', error);
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
             message: 'Error fetching gadgets',
             error: error.message
@@ -102,7 +102,7 @@ const addGadget = async(req, res) => {
         });
     } catch (error) {
         console.error('Error creating gadget:', error);
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
             message: 'Error creating gadget',
             error: error.message
@@ -142,7 +142,7 @@ const updateGadget = async(req, res) => {
         });
     } catch (error) {
         console.error('Error updating gadget:', error);
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
             message: 'Error updating gadget',
             error: error.message
@@ -179,7 +179,7 @@ const deleteGadget = async(req, res) => {
 
     } catch (error) {
         console.error('Error decommissioning gadget:', error);
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
             message: 'Error decommissioning gadget',
             error: error.message
@@ -238,7 +238,7 @@ const selfDestructGadget = async(req, res) => {
 
     } catch (error) {
         console.error('Error in self-destruct sequence:', error);
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
             message: 'Error in self-destruct sequence',
             error: error.message
