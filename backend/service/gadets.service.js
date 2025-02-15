@@ -60,7 +60,7 @@ const selfDestructGadget = async (id) => {
     return gadget;
 };
 
-const getByStatus =async(status){
+const getByStatus =async(status)=>{
     const gadget=await Gadgets.find({where:{status}});
     if(!gadget){
         return null;
