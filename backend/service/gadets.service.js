@@ -60,10 +60,17 @@ const selfDestructGadget = async (id) => {
     await gadget.save();
     return gadget;
 };
-
+const getByStatus =async(status){
+    const gadget=await Gadgets.find({where:{status}});
+    if(!gadget){
+        return null;
+    }
+    return gadget;
+};
 module.exports = {
     createGadget,
     updateGadget,
     decommissionGadget,
-    selfDestructGadget
+    selfDestructGadget,
+    getByStatus
 };
