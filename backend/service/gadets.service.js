@@ -67,11 +67,21 @@ const getByStatus =async(status)=>{
     }
     return gadget;
 };
+
+const getAll =async ()=>{
+    const gadget=await Gadgets.findAll();
+    if(!gadget)
+    {
+        return null;
+    }
+    return gadget;
+}
 module.exports = {
     createGadget,
     updateGadget,
     decommissionGadget,
     selfDestructGadget,
-    getByStatus
+    getByStatus,
+    getAll
 
 };

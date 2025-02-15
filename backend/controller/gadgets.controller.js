@@ -50,7 +50,7 @@ const getGadget = async(req, res) => {
                 data: gadgets
             });
         }
-        const gadgets = await Gadgets.findAll();
+        const gadgets = await gadgetService.getAll();
         if (!gadgets || gadgets.length === 0) {
             return res.status(404).json({
                 success: false,
